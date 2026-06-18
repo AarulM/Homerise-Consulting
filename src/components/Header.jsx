@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import Typewriter from './Typewriter.jsx'
 
 const navLinks = [
   { label: 'How it Works', href: '/#how-it-works' },
@@ -16,9 +17,7 @@ function Logo() {
         <span className="truncate text-lg font-black tracking-tight text-navy sm:text-2xl">
           HomeRise <span className="font-bold text-navy/80">Consulting</span>
         </span>
-        <span className="mt-1 truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-ink/45 sm:text-[11px]">
-          Roofing Growth Agency
-        </span>
+        <Typewriter className="mt-0.5 text-[11px] font-semibold tracking-wide text-electric sm:text-xs" />
       </span>
     </Link>
   )
