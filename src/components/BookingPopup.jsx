@@ -5,6 +5,7 @@ export default function BookingPopup() {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const [dismissed, setDismissed] = useState(false)
+  const [chatOpen, setChatOpen] = useState(false)
 
   // Appear a few seconds after load. No auto-dismiss — it stays until the
   // user clicks the X, and returns fresh on every page refresh.
@@ -13,6 +14,26 @@ export default function BookingPopup() {
     const t = setTimeout(() => setOpen(true), 4000)
     return () => clearTimeout(t)
   }, [pathname, dismissed])
+
+  // Watch the LeadConnector chat widget. When its window is expanded (tall),
+  // move the popup out of the way so it never covers the chatbot.
+  useEffect(() => {
+    const isChatOpen = () => {
+      const nodes = document.querySelectorAll(
+        'iframe[src*="leadconnector"], iframe[src*="msgsndr"], iframe[src*="chat-widget"], [id*="chat-widget"], [class*="chat-widget"]',
+      )
+      for (const el of nodes) {
+        const r = el.getBoundingClientRect()
+        // A collapsed launcher bubble is small (~60px); the open chat is tall.
+        if (r.height > 280 && r.width > 220) return true
+      }
+      return false
+    }
+    const update = () => setChatOpen(isChatOpen())
+    update()
+    const id = setInterval(update, 400)
+    return () => clearInterval(id)
+  }, [])
 
   const close = () => {
     setOpen(false)
@@ -25,7 +46,9 @@ export default function BookingPopup() {
     <div
       role="dialog"
       aria-label="Book a strategy call"
-      className={`fixed top-24 right-5 z-[9999] w-[calc(100%-2.5rem)] max-w-[15rem] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+      className={`fixed top-24 z-[9999] w-[calc(100%-2.5rem)] max-w-[15rem] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        chatOpen ? 'left-5' : 'right-5'
+      } ${
         open ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-[120%] opacity-0'
       }`}
     >
