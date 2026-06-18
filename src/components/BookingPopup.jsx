@@ -20,18 +20,18 @@ export default function BookingPopup() {
   useEffect(() => {
     const isChatOpen = () => {
       const nodes = document.querySelectorAll(
-        'iframe[src*="leadconnector"], iframe[src*="msgsndr"], iframe[src*="chat-widget"], [id*="chat-widget"], [class*="chat-widget"]',
+        'chat-widget, [id*="chat-widget"], [class*="chat-widget"], [id*="lc_text"], [class*="lc_text"], iframe[src*="leadconnector"], iframe[src*="msgsndr"], iframe[src*="chat-widget"]',
       )
       for (const el of nodes) {
         const r = el.getBoundingClientRect()
-        // A collapsed launcher bubble is small (~60px); the open chat is tall.
-        if (r.height > 280 && r.width > 220) return true
+        // A collapsed launcher bubble is small (~60px); the open chat panel is large.
+        if (r.height > 240 && r.width > 200) return true
       }
       return false
     }
     const update = () => setChatOpen(isChatOpen())
     update()
-    const id = setInterval(update, 400)
+    const id = setInterval(update, 350)
     return () => clearInterval(id)
   }, [])
 
@@ -42,14 +42,17 @@ export default function BookingPopup() {
 
   if (pathname === '/book' || dismissed) return null
 
+  // Hide entirely while the chat panel is open so it can never cover the chatbot.
+  const visible = open && !chatOpen
+
   return (
     <div
       role="dialog"
       aria-label="Book a strategy call"
-      className={`fixed top-24 z-[9999] w-[calc(100%-2.5rem)] max-w-[15rem] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        chatOpen ? 'left-5' : 'right-5'
-      } ${
-        open ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-[120%] opacity-0'
+      className={`fixed bottom-5 left-4 right-4 z-[9999] max-w-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:bottom-auto sm:left-auto sm:right-5 sm:top-24 sm:w-[calc(100%-2.5rem)] sm:max-w-[15rem] ${
+        visible
+          ? 'translate-y-0 opacity-100 sm:translate-x-0'
+          : 'pointer-events-none translate-y-[140%] opacity-0 sm:translate-y-0 sm:translate-x-[120%]'
       }`}
     >
       <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-navy p-4 shadow-card-hover">

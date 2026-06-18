@@ -10,6 +10,8 @@ const stats = [
   { value: '100%', label: 'you own your ad account', sub: 'your data, your audience — always' },
 ]
 
+const guarantees = ['You own your ad account', 'No long-term contract', 'Cancel anytime']
+
 const steps = [
   {
     n: '01',
@@ -174,14 +176,26 @@ export default function Home() {
                 className="pointer-events-none absolute inset-0 opacity-90"
                 style={{ background: 'linear-gradient(110deg, #1E3A5F 0%, #234a7a 100%)' }}
               />
-              <div className="relative flex flex-col items-center gap-3 text-center md:flex-row md:items-center md:gap-8 md:text-left">
-                <div className="md:border-r md:border-white/15 md:pr-8">
-                  <p className="text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">100%</p>
-                  <p className="mt-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-electric sm:text-xs">Guarantee</p>
+              <div className="relative">
+                <div className="flex flex-col items-center gap-3 text-center md:flex-row md:items-center md:gap-8 md:text-left">
+                  <div className="md:border-r md:border-white/15 md:pr-8">
+                    <p className="text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">100%</p>
+                    <p className="mt-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-electric sm:text-xs">Risk-Free</p>
+                  </div>
+                  <p className="max-w-xl text-lg font-semibold leading-snug text-white/90 sm:text-xl md:text-2xl">
+                    If we don't hit your target, we keep working <span className="text-white">free</span> until we do.
+                  </p>
                 </div>
-                <p className="max-w-xl text-lg font-semibold leading-snug text-white/90 sm:text-xl md:text-2xl">
-                  If we don't hit your target, we keep working <span className="text-white">free</span> until we do.
-                </p>
+                <div className="mt-6 grid gap-3 border-t border-white/10 pt-6 sm:grid-cols-3 sm:gap-5">
+                  {guarantees.map((g) => (
+                    <div key={g} className="flex items-center justify-center gap-2.5 text-center sm:justify-start sm:text-left">
+                      <svg viewBox="0 0 24 24" className="h-5 w-5 flex-none text-electric" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-sm font-semibold text-white/85 sm:text-[15px]">{g}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </Reveal>
@@ -215,6 +229,76 @@ export default function Home() {
                 </div>
               </Reveal>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===================== FOUNDER / WHY TRUST US ==================== */}
+      <section className="section">
+        <div className="container-x">
+          <div className="overflow-hidden rounded-3xl border border-navy/10 bg-white shadow-card">
+            <div className="grid md:grid-cols-[300px_1fr]">
+              {/* Photo / identity panel */}
+              <Reveal from="left">
+                <div className="relative flex h-full flex-col items-center justify-center gap-4 bg-navy px-6 py-10 text-center">
+                  <div
+                    className="pointer-events-none absolute inset-0 opacity-90"
+                    style={{ background: 'linear-gradient(150deg, #1E3A5F 0%, #234a7a 100%)' }}
+                  />
+                  <img
+                    src="/headshot.png"
+                    alt="Aarul, founder of HomeRise Consulting"
+                    className="relative h-28 w-28 rounded-full object-cover shadow-card-hover ring-4 ring-white/15 sm:h-32 sm:w-32"
+                    style={{ objectPosition: '50% 25%' }}
+                  />
+                  <div className="relative">
+                    <p className="text-lg font-bold text-white">Aarul</p>
+                    <p className="text-sm text-white/60">Founder &amp; Owner</p>
+                  </div>
+                </div>
+              </Reveal>
+
+              {/* Story */}
+              <Reveal from="right" delay={80}>
+                <div className="px-6 py-8 sm:px-9 sm:py-10 md:px-10">
+                  <span className="eyebrow">Who you're working with</span>
+                  <h2 className="text-2xl font-extrabold leading-tight tracking-tight text-navy sm:text-3xl">
+                    Founder-led, hands-on, and accountable to your results
+                  </h2>
+                  <p className="mt-4 text-base leading-relaxed text-ink/75 sm:text-lg">
+                    I'm Aarul — I build automation systems for a living: AI sales agents, lead
+                    qualification tools, the works. I started HomeRise to put that technical edge to
+                    real use for roofers, instead of running the same tired ad campaigns every other
+                    agency sells.
+                  </p>
+                  <p className="mt-3 text-base leading-relaxed text-ink/75 sm:text-lg">
+                    When you work with me, you work with <span className="font-semibold text-navy">me</span> —
+                    not a junior account manager three layers removed from your account. Every system
+                    you see here is something I've built and tested myself.
+                  </p>
+
+                  <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+                    {[
+                      'You work directly with the founder',
+                      'Roofing-only — not a general agency',
+                      'Systems built & tested in-house',
+                      'Backed by a no-risk guarantee',
+                    ].map((point) => (
+                      <li key={point} className="flex items-start gap-2.5">
+                        <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 flex-none text-electric" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-sm font-medium text-ink/80 sm:text-base">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link to="/book" className="btn-cta mt-7 px-6 py-3 text-sm sm:text-base">
+                    Book a call with Aarul
+                  </Link>
+                </div>
+              </Reveal>
+            </div>
           </div>
         </div>
       </section>
