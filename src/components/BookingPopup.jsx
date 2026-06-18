@@ -1,34 +1,22 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
-const STORAGE_KEY = 'hr_popup_dismissed'
-
 export default function BookingPopup() {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const [dismissed, setDismissed] = useState(false)
 
+  // Appear a few seconds after load. No auto-dismiss — it stays until the
+  // user clicks the X, and returns fresh on every page refresh.
   useEffect(() => {
-    if (pathname === '/book') return
-    let already = false
-    try {
-      already = sessionStorage.getItem(STORAGE_KEY) === '1'
-    } catch {
-      already = false
-    }
-    if (already) return
-    const t = setTimeout(() => setOpen(true), 5000)
+    if (pathname === '/book' || dismissed) return
+    const t = setTimeout(() => setOpen(true), 4000)
     return () => clearTimeout(t)
-  }, [pathname])
+  }, [pathname, dismissed])
 
   const close = () => {
     setOpen(false)
     setDismissed(true)
-    try {
-      sessionStorage.setItem(STORAGE_KEY, '1')
-    } catch {
-      /* ignore */
-    }
   }
 
   if (pathname === '/book' || dismissed) return null
@@ -37,7 +25,7 @@ export default function BookingPopup() {
     <div
       role="dialog"
       aria-label="Book a strategy call"
-      className={`fixed top-20 right-5 z-[60] w-[calc(100%-2.5rem)] max-w-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+      className={`fixed top-24 right-5 z-[9999] w-[calc(100%-2.5rem)] max-w-xs transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         open ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-[120%] opacity-0'
       }`}
     >
@@ -53,9 +41,9 @@ export default function BookingPopup() {
           type="button"
           onClick={close}
           aria-label="Close"
-          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+          className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-white/60 transition-colors hover:bg-white/10 hover:text-white"
         >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.2">
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6L6 18" />
           </svg>
         </button>

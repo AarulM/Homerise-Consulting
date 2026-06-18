@@ -6,7 +6,6 @@ const WORDS = [
   'Lead Generation',
   'AI Automation',
   'Booked Appointments',
-  'Growth',
 ]
 
 export default function Typewriter({ className = '' }) {

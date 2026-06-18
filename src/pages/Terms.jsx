@@ -100,7 +100,7 @@ export default function Terms() {
         <h2>10. Contact</h2>
         <p>
           Questions about these Terms? Reach us at{' '}
-          <a href="mailto:hello@homeriseconsulting.com">hello@homeriseconsulting.com</a>.
+          <a href="mailto:homeriseconsulting@gmail.com">homeriseconsulting@gmail.com</a>.
         </p>
       </section>
     </LegalPage>

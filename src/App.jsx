@@ -12,16 +12,23 @@ import Privacy from './pages/Privacy.jsx'
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation()
+
+  // Disable browser scroll-restoration so we always control the position
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+  }, [])
+
   useEffect(() => {
     if (hash) {
       const el = document.getElementById(hash.slice(1))
       if (el) {
-        // wait a tick so the target section is mounted
         requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth' }))
         return
       }
     }
-    window.scrollTo(0, 0)
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
   }, [pathname, hash])
   return null
 }

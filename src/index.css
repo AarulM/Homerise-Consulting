@@ -2,17 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Rotating conic-gradient border that travels around the nav pill */
+@property --nav-glow-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes navGlowRotate {
+  to { --nav-glow-angle: 360deg; }
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 104px;
+  scrollbar-gutter: stable;
   /* Bump the global type scale up ~6% so everything reads a touch larger & more premium. */
   font-size: 106.25%;
 }
 
 body {
-  @apply bg-white text-ink font-sans antialiased;
+  @apply bg-subtle text-ink font-sans antialiased;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   letter-spacing: -0.011em;
+  /* clip (not hidden) prevents horizontal overflow WITHOUT creating a
+     scroll container — `hidden` here would break the sticky header. */
+  overflow-x: clip;
+}
+
+/* Prevent children from causing horizontal overflow */
+#root {
+  overflow-x: clip;
 }
 
 ::selection {
@@ -91,6 +111,22 @@ body {
   }
 }
 
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Nav pill drops in on first load */
+@keyframes navDrop {
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* -------------------------------- Utilities ------------------------------ */
 
 @layer utilities {
@@ -135,12 +171,28 @@ body {
     @apply bg-gradient-to-r from-electric to-blue-400 bg-clip-text text-transparent;
   }
 
+  /* Animation-delay stagger helpers for page-load sequences */
+  .anim-delay-100 { animation-delay: 100ms; }
+  .anim-delay-200 { animation-delay: 200ms; }
+  .anim-delay-300 { animation-delay: 300ms; }
+  .anim-delay-400 { animation-delay: 400ms; }
+  .anim-delay-500 { animation-delay: 500ms; }
+
   /* Soft top-to-bottom premium gradient for alternating sections */
   .bg-gradient-subtle {
     background: linear-gradient(180deg, #ffffff 0%, #f3f6fb 100%);
   }
   .bg-gradient-subtle-rev {
     background: linear-gradient(180deg, #f3f6fb 0%, #ffffff 100%);
+  }
+
+  /* Smooth fade-in / fade-out for grey alternating sections — no hard color seam */
+  .section-fade {
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 7%, #f8f9fa 93%, #ffffff 100%);
+  }
+  /* Subtle cool-blue tint for alternating sections */
+  .section-fade-blue {
+    background: linear-gradient(180deg, #ffffff 0%, #f5f7ff 7%, #f5f7ff 93%, #ffffff 100%);
   }
 }
 
@@ -156,7 +208,44 @@ body {
   }
 
   .section {
-    @apply px-5 py-24 sm:px-8 md:py-32;
+    @apply px-5 py-10 sm:px-8 sm:py-14 md:py-20;
+  }
+
+  .animate-modal-in {
+    animation: modalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .animate-backdrop-in {
+    animation: backdropIn 0.2s ease both;
+  }
+  .animate-nav-drop {
+    animation: navDrop 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* Encircling glow that travels around the nav pill border —
+     softened to a refined, slow sweep that reads premium not gimmicky. */
+  .nav-glow-border::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    padding: 1.5px;
+    background: conic-gradient(
+      from var(--nav-glow-angle),
+      transparent 0deg,
+      rgba(37, 99, 235, 0) 30deg,
+      rgba(37, 99, 235, 0.55) 60deg,
+      rgba(96, 165, 250, 0.65) 72deg,
+      rgba(37, 99, 235, 0.55) 84deg,
+      rgba(37, 99, 235, 0) 114deg,
+      transparent 360deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    animation: navGlowRotate 7s linear infinite;
+    pointer-events: none;
+    z-index: 2;
   }
 
   .container-x {
@@ -164,12 +253,12 @@ body {
   }
 
   .eyebrow {
-    @apply mb-4 inline-block text-sm font-extrabold uppercase tracking-[0.18em] text-electric;
+    @apply mb-3 inline-block text-xs font-bold uppercase tracking-[0.2em] text-electric/70;
   }
 
   /* Animated underline for nav links */
   .nav-link {
-    @apply relative text-[15px] font-semibold text-navy/80 transition-colors hover:text-navy;
+    @apply relative text-[15px] font-bold text-navy/80 transition-colors hover:text-navy;
   }
   .nav-link::after {
     content: '';

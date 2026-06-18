@@ -1,9 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 
+const HIDDEN = {
+  bottom: 'translate-y-8 opacity-0',
+  top: '-translate-y-6 opacity-0',
+  left: '-translate-x-10 opacity-0',
+  right: 'translate-x-10 opacity-0',
+  scale: 'scale-[0.94] opacity-0',
+}
+const SHOWN = 'translate-y-0 translate-x-0 scale-100 opacity-100'
+
 /**
- * Reveal — fades & slides its children up the first time they scroll into view.
+ * Reveal — slides/fades children in when they scroll into view.
+ * from: 'bottom' | 'top' | 'left' | 'right' | 'scale'
  */
-export function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }) {
+export function Reveal({ children, className = '', delay = 0, from = 'bottom', as: Tag = 'div' }) {
   const ref = useRef(null)
   const [shown, setShown] = useState(false)
 
@@ -12,12 +22,11 @@ export function Reveal({ children, className = '', delay = 0, as: Tag = 'div' })
     if (!el) return
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setShown(true)
-          obs.disconnect()
-        }
+        // No disconnect — keep watching so elements animate back out
+        // when scrolled past and animate back in when scrolled back down.
+        setShown(entry.isIntersecting)
       },
-      { threshold: 0.12, rootMargin: '0px 0px -48px 0px' },
+      { threshold: 0.08, rootMargin: '0px 0px -36px 0px' },
     )
     obs.observe(el)
     return () => obs.disconnect()
@@ -28,7 +37,7 @@ export function Reveal({ children, className = '', delay = 0, as: Tag = 'div' })
       ref={ref}
       style={{ transitionDelay: `${delay}ms` }}
       className={`transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        shown ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+        shown ? SHOWN : (HIDDEN[from] ?? HIDDEN.bottom)
       } ${className}`}
     >
       {children}
