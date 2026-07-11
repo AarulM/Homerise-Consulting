@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { X, Send, Sun, Moon, CalendarCheck2 } from 'lucide-react'
+import { X, Send, Sun, Moon, CalendarCheck2, RotateCcw } from 'lucide-react'
 import CalendlyEmbed from './CalendlyEmbed.jsx'
 import { confirmBooking } from '../lib/email.js'
 import { getStoredTheme, applyTheme } from '../lib/theme.js'
@@ -53,6 +53,19 @@ export const VISITED_KEY = 'homerise_visited'
 const MESSAGES_KEY = 'homerise_chat_messages'
 const EMAIL_RE = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/
 
+/**
+ * Snapshot taken at page load, BEFORE the mount effect marks this session
+ * as visited — reading localStorage at render time would see the flag our
+ * own session just wrote and greet first-time visitors with "welcome back".
+ */
+export const isReturningVisitor = (() => {
+  try {
+    return !!localStorage.getItem(VISITED_KEY)
+  } catch {
+    return false
+  }
+})()
+
 function now() {
   return Date.now()
 }
@@ -67,7 +80,7 @@ function getInitialMessages() {
     const stored = JSON.parse(localStorage.getItem(MESSAGES_KEY) || 'null')
     if (Array.isArray(stored) && stored.length > 0) return stored
   } catch {}
-  const greeting = localStorage.getItem(VISITED_KEY) ? RETURN_GREETING : FIRST_GREETING
+  const greeting = isReturningVisitor ? RETURN_GREETING : FIRST_GREETING
   return [{ ...greeting, ts: now() }]
 }
 
@@ -121,7 +134,7 @@ function playReceiveSound() {
 }
 
 export default function AiAgent() {
-  const isReturning = !!localStorage.getItem(VISITED_KEY)
+  const isReturning = isReturningVisitor
 
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState(getInitialMessages)
@@ -153,6 +166,15 @@ export default function AiAgent() {
   useEffect(() => {
     localStorage.setItem(MESSAGES_KEY, JSON.stringify(messages))
   }, [messages])
+
+  function resetChat() {
+    bookedRef.current = false
+    try {
+      localStorage.removeItem(MESSAGES_KEY)
+    } catch {}
+    setMessages([{ ...FIRST_GREETING, ts: now() }])
+    setInput('')
+  }
 
   function toggleTheme() {
     setTheme((prev) => {
@@ -394,6 +416,16 @@ export default function AiAgent() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={resetChat}
+                  disabled={sending}
+                  aria-label="Reset chat"
+                  title="Reset chat"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-white/50 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-40"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </button>
                 <button
                   type="button"
                   onClick={toggleTheme}

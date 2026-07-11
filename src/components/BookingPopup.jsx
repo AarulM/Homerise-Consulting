@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { VISITED_KEY } from './AiAgent.jsx'
+import { isReturningVisitor } from './AiAgent.jsx'
 
 export default function BookingPopup() {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const [dismissed, setDismissed] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
-  const isReturning = !!localStorage.getItem(VISITED_KEY)
+  const isReturning = isReturningVisitor
 
   // Appear a few seconds after load. No auto-dismiss — it stays until the
   // user clicks the X, and returns fresh on every page refresh.
