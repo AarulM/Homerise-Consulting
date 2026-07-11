@@ -10,12 +10,12 @@ export default function LegalPage({ title, updated, children }) {
         className="relative overflow-hidden"
         style={{
           background:
-            'radial-gradient(60% 50% at 50% -8%, rgba(37,99,235,0.09) 0%, rgba(37,99,235,0) 60%), #F8F9FA',
+            'radial-gradient(60% 50% at 50% -8%, rgba(37,99,235,0.09) 0%, rgba(37,99,235,0) 60%), rgb(var(--color-paper))',
         }}
       >
-        <div className="container-x px-5 pb-6 pt-8 sm:px-8 sm:pb-8 md:pt-12 md:pb-10">
+        <div className="container-x px-5 pb-6 pt-28 sm:px-8 sm:pb-8 md:pt-32 md:pb-10">
           <div className="mx-auto max-w-3xl">
-            <h1 className="animate-fade-up anim-delay-100 mt-1 text-3xl font-black tracking-tight text-navy sm:text-4xl md:text-5xl">
+            <h1 className="animate-fade-up anim-delay-100 mt-1 text-3xl font-black tracking-tight text-heading sm:text-4xl md:text-5xl">
               {title}
             </h1>
             <p className="animate-fade-up anim-delay-200 mt-3 text-sm font-medium text-ink/50">
@@ -31,8 +31,8 @@ export default function LegalPage({ title, updated, children }) {
           <div className="mx-auto max-w-3xl space-y-5">
             {sections.map((child, i) => (
               <Reveal key={i} from="bottom" delay={i * 45}>
-                <div className="rounded-2xl border border-navy/8 bg-white p-7 shadow-card sm:p-8
-                  [&_h2]:mb-3 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-navy
+                <div className="rounded-2xl border border-navy/8 bg-surface p-7 shadow-card sm:p-8
+                  [&_h2]:mb-3 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-heading
                   [&_p]:text-base [&_p]:leading-relaxed [&_p]:text-ink/70
                   [&_a]:font-semibold [&_a]:text-electric
                   [&_ul]:mt-3 [&_ul]:space-y-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:text-base [&_ul]:text-ink/70">

@@ -21,18 +21,17 @@ describe('Home content & conversion elements', () => {
     expect(screen.getByText('FAQ')).toBeInTheDocument()
   })
 
-  it('shows the stacked risk-reversal guarantees (replaces social proof)', () => {
+  it('shows the risk-reversal guarantee statement', () => {
     renderAt(<Home />)
-    expect(screen.getByText(/risk-free/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/our guarantee/i).length).toBeGreaterThan(0)
     expect(screen.getByText('You own your ad account')).toBeInTheDocument()
     expect(screen.getByText('No long-term contract')).toBeInTheDocument()
     expect(screen.getByText('Cancel anytime')).toBeInTheDocument()
   })
 
-  it('shows a founder/trust section (authenticity over testimonials)', () => {
+  it('shows a founder note section (authenticity over testimonials)', () => {
     renderAt(<Home />)
-    expect(screen.getByText(/who you're working with/i)).toBeInTheDocument()
-    expect(screen.getByText(/founder-led/i)).toBeInTheDocument()
+    expect(screen.getByText(/a note from the founder/i)).toBeInTheDocument()
     expect(screen.getByText(/You work directly with the founder/i)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /book a call with aarul/i })).toHaveAttribute('href', '/book')
   })

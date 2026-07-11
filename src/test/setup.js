@@ -2,8 +2,34 @@ import '@testing-library/jest-dom/vitest'
 import { afterEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 
+// Node 22+ exposes its own (flag-gated, broken here) localStorage global that
+// can shadow jsdom's. Stub a real in-memory implementation for determinism.
+class MemoryStorage {
+  #store = new Map()
+  getItem(k) {
+    return this.#store.has(String(k)) ? this.#store.get(String(k)) : null
+  }
+  setItem(k, v) {
+    this.#store.set(String(k), String(v))
+  }
+  removeItem(k) {
+    this.#store.delete(String(k))
+  }
+  clear() {
+    this.#store.clear()
+  }
+  key(i) {
+    return [...this.#store.keys()][i] ?? null
+  }
+  get length() {
+    return this.#store.size
+  }
+}
+vi.stubGlobal('localStorage', new MemoryStorage())
+
 afterEach(() => {
   cleanup()
+  localStorage.clear()
 })
 
 // jsdom doesn't implement IntersectionObserver — the Reveal/Counter components use it.

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { VISITED_KEY } from './AiAgent.jsx'
 
 export default function BookingPopup() {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const [dismissed, setDismissed] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
+  const isReturning = !!localStorage.getItem(VISITED_KEY)
 
   // Appear a few seconds after load. No auto-dismiss — it stays until the
   // user clicks the X, and returns fresh on every page refresh.
@@ -15,21 +17,10 @@ export default function BookingPopup() {
     return () => clearTimeout(t)
   }, [pathname, dismissed])
 
-  // Watch the LeadConnector chat widget. When its window is expanded (tall),
-  // move the popup out of the way so it never covers the chatbot.
+  // Watch the Rise chat widget (it flags itself on document.body when open).
+  // When the chat panel is up, move the popup out of the way so it never covers it.
   useEffect(() => {
-    const isChatOpen = () => {
-      const nodes = document.querySelectorAll(
-        'chat-widget, [id*="chat-widget"], [class*="chat-widget"], [id*="lc_text"], [class*="lc_text"], iframe[src*="leadconnector"], iframe[src*="msgsndr"], iframe[src*="chat-widget"]',
-      )
-      for (const el of nodes) {
-        const r = el.getBoundingClientRect()
-        // A collapsed launcher bubble is small (~60px); the open chat panel is large.
-        if (r.height > 240 && r.width > 200) return true
-      }
-      return false
-    }
-    const update = () => setChatOpen(isChatOpen())
+    const update = () => setChatOpen(document.body.dataset.chatOpen === 'true')
     update()
     const id = setInterval(update, 350)
     return () => clearInterval(id)
@@ -77,10 +68,14 @@ export default function BookingPopup() {
         <div className="relative">
           <p className="pr-8 text-[11px] font-extrabold uppercase tracking-[0.18em] text-electric">Free Strategy Call</p>
           <h3 className="mt-1.5 text-base font-black leading-snug tracking-tight text-white">
-            Ready for 6–8 more jobs a month?
+            {isReturning
+              ? 'Ready to pick up where we left off?'
+              : 'Ready for 6–8 more jobs a month?'}
           </h3>
           <p className="mt-1.5 text-xs leading-relaxed text-white/70">
-            Grab a free 30-minute call — no pitch, just a clear plan to fill your calendar.
+            {isReturning
+              ? 'Book your free 30-minute call — no pitch, just a clear plan.'
+              : 'Grab a free 30-minute call — no pitch, just a clear plan to fill your calendar.'}
           </p>
           <Link to="/book" onClick={close} className="btn-cta mt-3.5 w-full text-sm">
             Book a Strategy Call

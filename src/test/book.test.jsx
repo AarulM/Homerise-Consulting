@@ -11,11 +11,36 @@ describe('Book page', () => {
     expect(screen.getByText(/keep our calendar tight/i)).toBeInTheDocument()
   })
 
-  it('embeds the booking calendar iframe', () => {
+  it('shows the pre-qualifying questions and hides the calendar until qualified', () => {
     renderAt(<Book />, { route: '/book' })
-    const iframe = screen.getByTitle(/book a strategy call/i)
-    expect(iframe).toBeInTheDocument()
-    expect(iframe.getAttribute('src')).toMatch(/leadconnectorhq\.com\/widget\/booking/)
+    expect(screen.getByText(/are you a roofing contractor\?/i)).toBeInTheDocument()
+    expect(screen.queryByTestId('calendly-embed')).not.toBeInTheDocument()
+  })
+
+  it('walks through the qualifier and reveals the Calendly embed', async () => {
+    const user = userEvent.setup()
+    renderAt(<Book />, { route: '/book' })
+
+    await user.click(screen.getByRole('button', { name: /yes, i'm a roofer/i }))
+    await user.click(screen.getByRole('button', { name: /\$1M\+/i }))
+    await user.click(screen.getByRole('button', { name: /mainly referrals/i }))
+    await user.type(screen.getByPlaceholderText(/your city/i), 'Seattle, WA')
+    await user.type(screen.getByPlaceholderText(/your@email\.com/i), 'roofer@example.com')
+    await user.click(screen.getByRole('button', { name: /see available times/i }))
+
+    expect(screen.getByTestId('calendly-embed')).toBeInTheDocument()
+    expect(screen.getByText(/pick a time below/i)).toBeInTheDocument()
+  })
+
+  it('disqualifies contractors under $250K revenue', async () => {
+    const user = userEvent.setup()
+    renderAt(<Book />, { route: '/book' })
+
+    await user.click(screen.getByRole('button', { name: /yes, i'm a roofer/i }))
+    await user.click(screen.getByRole('button', { name: /under \$250k/i }))
+
+    expect(screen.getByText(/not quite there yet/i)).toBeInTheDocument()
+    expect(screen.queryByTestId('calendly-embed')).not.toBeInTheDocument()
   })
 
   it('opens the About Aarul modal and shows the bio, then closes it', async () => {
